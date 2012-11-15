@@ -2,15 +2,15 @@ var mongoose = require("mongoose")
     , Schema = mongoose.Schema;
 
 var hitSchema = new Schema({
-    contentId: String,
-    type: String,
-    breadCrum: [String],
-    tags: [String],
-    date: {type: Date, default: Date.now}
+    c: {type: String, required: true, trim: true, index: true},
+    t: {type: String, lowercase: true, trim: true},
+    b: [{type: String, lowercase: true, trim: true}],
+    w: [{type: String, lowercase: true, trim: true}],
+    d: {type: Date, default: Date.now}
 });
 
 hitSchema.statics.getNumHitsByContentId = function (contentId, callback) {
-    this.count({contentId: contentId}, callback);
+    this.count({c: contentId}, callback);
 }
 
 hitSchema.statics.doHit = function (data, callback) {
@@ -24,28 +24,28 @@ hitSchema.statics.findMostHitted = function (query, callback) {
     if (query.startDate || query.endDate) {
         if (query.startDate) {
             if (!query.endDate) {
-                aggregate.push({$match: {date: {$gte: query.startDate}}});
+                aggregate.push({$match: {d: {$gte: query.startDate}}});
             } else {
-                aggregate.push({$match: {date: {$gte: query.startDate, $lte: query.endDate}}});  
+                aggregate.push({$match: {d: {$gte: query.startDate, $lte: query.endDate}}});  
             }
         } else {
-            aggregate.push({$match: {date: {$lte: query.endDate}}});
+            aggregate.push({$match: {d: {$lte: query.endDate}}});
         }        
     }
 
     if (query.breadcrum[0]) {
-        aggregate.push({$match: {breadCrum: {$in: query.breadcrum}}});
+        aggregate.push({$match: {b: {$in: query.breadcrum}}});
     }
 
     if (query.tags[0]) {
-        aggregate.push({$match: {tags: {$in: query.tags}}})
+        aggregate.push({$match: {w: {$in: query.tags}}})
     }
 
     if (query.type) {
-        aggregate.push({$match: {type: query.type}});
+        aggregate.push({$match: {t: query.type.toLowerCase()}});
     }
 
-    aggregate.push({$group: {_id: "$contentId", hits: {$sum : 1}}});
+    aggregate.push({$group: {_id: "$c", hits: {$sum : 1}}});
     aggregate.push({$sort: {hits: -1}});    
     aggregate.push({$limit: query.results});
 
