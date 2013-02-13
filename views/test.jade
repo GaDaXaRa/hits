@@ -1,0 +1,32 @@
+extends layout
+
+block content
+    script(src="/javascripts/jquery-1.8.1.js")
+    script(src="/javascripts/view.test.js")
+
+    h1 hiTTer Test Page
+    h2 hiT!
+    label(for="contentId") Content Id:
+    input#contentId
+    label(for="contentType") Content Type:
+    input#contentType
+    label(for="section") Section:
+    input#section
+    label(for="contentTag") Tag:
+    input#contentTag
+    label(for="numHits") Number of Hits
+    input#numHits
+    a(id="doHits", href="#") Hit!
+    span(id="hitCounter")
+    h2 find!
+    label(for="findByType") Content Type:
+    input#findByType
+    label(for="findBySection") Section:
+    input#findBySection
+    label(for="findByTag") Tag:
+    input#findByTag
+    label(for="days") Days:
+    input#days
+    label(for="numResults") Results:
+    input#numResults
+    a(id="find", href="#") Find!
